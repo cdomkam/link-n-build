@@ -6,7 +6,7 @@ from typing import Any
 
 from user.user_db import set_user, update_user
 from constants import DB
-from user.user_schema import create_user_schema, update_user_schema, create_settings_schema, save_track_schema, save_set_schema
+from user.user_schema import create_user_schema, update_user_schema
 
 
 @https_fn.on_call()
