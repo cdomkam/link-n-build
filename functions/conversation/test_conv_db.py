@@ -68,9 +68,11 @@ def create_conv_data():
 
 def test_conv_batch():
     '''Test Conversation uploading in Batch'''
-    function_url = "http://localhost:5001/gemini-team/us-central1/add_conversation_batch"
+    # function_url = "http://localhost:5001/gemini-team/us-central1/add_conversation_batch"
+    function_url = 'https://us-central1-gemini-team.cloudfunctions.net/add_conversation_batch'
     data = {
-        "user_id":"c1dbf4a1-b2af-4423-9c07-2d9a98806ff5",
+        # "user_id":"c1dbf4a1-b2af-4423-9c07-2d9a98806ff5",
+        "user_id":"c66efcb7-1e0a-4d30-a867-cda28e06a845",
         "comments":comments,
         "responses":responses
     }
