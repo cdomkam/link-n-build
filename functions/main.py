@@ -1,13 +1,15 @@
 
 import os
-from firebase_functions import https_fn
+from firebase_functions import https_fn, options
 from google.cloud import exceptions
 import jsonschema
 from jsonschema import validate
 # from constants import *
 from typing import Dict
+# from flask import jsonify, make_response
 
 from user.user_api import *
+from conversation.conversation_api import *
 
 
 hello_LNB_schema = {
@@ -51,6 +53,17 @@ def hello_lnb(req: https_fn.CallableRequest) -> Dict[str,str]:
 
 
 
+@https_fn.on_request(
+    cors=options.CorsOptions(
+        cors_origins=[r"firebase\.com$", r"https://flutter\.com"],
+        cors_methods=["get"],
+    )
+)
+def say_hello(req: https_fn.Request) -> https_fn.Response:
+    print(req.data)
+    mssg={"hello":"Hello world!"}
+    # data = make_response(mssg) # Use if we need headers in response
+    return mssg
 
 
    
