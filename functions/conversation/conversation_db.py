@@ -93,3 +93,18 @@ def get_conversations_by(filter_by: str, filter_value: str, comparator: str)-> A
   conv_query = conv_ref.where(filter=FieldFilter(filter_by, comparator, filter_value))
   
   return conv_query.get()
+
+def get_conversation_from_session(name: str, session_id:str) -> str:
+  
+  conv_docs = get_conversations_by(filter_by="session_id", filter_value=session_id, comparator="==")
+  
+  
+  chunk=f"<h1>Conversation with {name}</h1>"
+  for conv_doc in conv_docs:
+    conv_dict = conv_doc.to_dict()
+    comment = conv_dict['comment']
+    response = conv_dict['response']
+    
+    chunk += f"<b>Question</b>: {comment}<br><b>Answer</b>: {response}<br><br>"
+  
+  return chunk

@@ -17,15 +17,18 @@ def test_create_user():
     set_user(data=data)
     ... 
 
-def create_user_data():
-    user_id=get_uid()
-    data={
-        "user_id":user_id,
-        "name":"Lars Ekstrom",
-        "username":"lEkstrom"
-    }
+def create_user_data(data: dict):
+    
+    
     set_user(data=data)
     ...
 
 if __name__=="__main__":
-    create_user_data()
+    
+    data={
+        "user_id":get_uid(),
+        "name":"test name",
+        "username":"tName"
+    }
+
+    create_user_data(data=data)

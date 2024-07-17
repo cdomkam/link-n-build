@@ -4,7 +4,7 @@ import jsonschema
 from jsonschema import validate
 from typing import Any
 import json
-from conversation.conversation_db import set_conv, create_conv
+from conversation.conversation_db import set_conv, create_conv, get_conversation_from_session
 from user.user_db import get_user
 from constants import DB
 from database import get_uid
@@ -27,6 +27,15 @@ add_conv_batch_schema: dict[str,Any] = {
         "user_id": {"type": "string"},
     },
     "required": ["comments", "responses", "user_id"]
+}
+
+entire_conv_schema = {
+    "type": "object",
+    "properties": {
+        "user_id": {"type": "string"},
+        "session_id":{"type": "string"}
+    },
+    "required": ["user_id", "session_id"]
 }
 
 # TODO:(cdomkam) FIGURE OUT HOW TO GET CORS TO WORK HERE
@@ -117,4 +126,29 @@ def add_conversation_batch(req: https_fn.Request) -> https_fn.Response:
         raise https_fn.HttpsError(code=https_fn.FunctionsErrorCode.INVALID_ARGUMENT, message=message, details={"internalMessage": "Its a bad request"})
     
     except:
-        raise exceptions.InternalServerError("AHH Something Bad Happened!")    
+        raise exceptions.InternalServerError("AHH Something Bad Happened!")
+
+@https_fn.on_request()
+def get_entire_conversation_by_session(req: https_fn.Request) -> https_fn.Response:
+    '''Gets Entire Conversation from a user session with bot and returns it in markdown format'''
+    
+    try:
+        data = json.loads(req.data)
+        
+        validate(instance=data, schema=entire_conv_schema)
+
+        user_id = data.get('user_id')
+        session_id = data.get('session_id')
+        user_dict = get_user(user_id=user_id)
+        name = user_dict["name"]
+        
+        conversation = get_conversation_from_session(name=name, 
+                                                 session_id=session_id)
+        return {"data": f"{conversation}"}
+        
+    except jsonschema.exceptions.ValidationError as e:
+        message = 'This is a bad request'
+        raise https_fn.HttpsError(code=https_fn.FunctionsErrorCode.INVALID_ARGUMENT, message=message, details={"internalMessage": "Its a bad request"})
+    
+    except:
+        raise exceptions.InternalServerError("AHH Something Bad Happened!")     

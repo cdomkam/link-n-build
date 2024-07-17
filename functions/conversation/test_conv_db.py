@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)) + "/../")
 
-from conversation_db import set_conv, create_conv, update_conv, get_conversations_by
+from conversation_db import set_conv, create_conv, update_conv, get_conversations_by, get_conversation_from_session
 from user.user_db import get_users_by
 from database import get_uid
 import requests
@@ -17,10 +17,10 @@ from emily_persona import (photography_questions, photography_responses, work_li
 from lars_persona import (linguistics_questions, linguistics_responses, education_questions, education_responses, 
                           sailing_questions, sailing_responses)
 
-# CURRENT_DIR=os.path.dirname(os.path.abspath(__file__)) + "/.."
+CURRENT_DIR=os.path.dirname(os.path.abspath(__file__)) + "/.."
 
-# dotenv.load_dotenv(dotenv_path="keys/keys.env")
-# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = CURRENT_DIR + os.environ["GEM_KEYS_FUNCTION"]
+dotenv.load_dotenv(dotenv_path="keys/keys.env")
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = CURRENT_DIR + os.environ["GEM_KEYS_FUNCTION"]
 
 # comments = [
 #     "What's a hobby or interest you have that not many people know about?",
@@ -54,6 +54,17 @@ def get_id_token(function_url: str):
     token = id_token.fetch_id_token(auth_req, function_url)
     return token
 
+def get_conv_by_name(name:str):
+    conv_docs = get_conversations_by(filter_by="name", filter_value=name, comparator="==")
+    sesh_set = set()
+    for conv_doc in conv_docs:
+        
+        conv_dict = conv_doc.to_dict()
+        sesh_id = conv_dict.get('session_id')
+        if sesh_id not in sesh_set:
+            sesh_set.add(sesh_id)
+            print(f"Name: {name} Session ID: {sesh_id}")
+            
 def create_conv_data(name: str, username: str, comments:list[str], responses:list[str]):
     '''
         Creates Conversation data in fireatore
@@ -68,15 +79,6 @@ def create_conv_data(name: str, username: str, comments:list[str], responses:lis
     
     if user_id is None:
         raise Exception(f'User ID not found from {name}')
-    
-    # conv_docs = get_conversations_by(filter_by="name", filter_value=name, comparator="==")
-    # for conv_doc in conv_docs:
-        
-    #     conv_dict = conv_doc.to_dict()
-    #     conv_dict['user_id'] = user_id
-    #     conv_id = conv_dict['conv_id']
-        
-    #     update_conv(conv_id=conv_id, conv_data=conv_dict)
     
     sessions_id = get_uid()
     for c, r in zip(comments, responses):
@@ -95,17 +97,7 @@ def create_conv_data(name: str, username: str, comments:list[str], responses:lis
     #     break
     ... 
 
-def test_conv_batch():
-    '''Test Conversation uploading in Batch'''
-    # function_url = "http://localhost:5001/gemini-team/us-central1/add_conversation_batch"
-    function_url = 'https://us-central1-gemini-team.cloudfunctions.net/add_conversation_batch'
-    data = {
-        # "user_id":"c1dbf4a1-b2af-4423-9c07-2d9a98806ff5",
-        "user_id":"c66efcb7-1e0a-4d30-a867-cda28e06a845",
-        "comments":comments,
-        "responses":responses
-    }
-    
+def make_a_request(function_url: str, data: dict):
     token = get_id_token(function_url = function_url)
     headers = {
         'Authorization': f'Bearer {token}',
@@ -119,11 +111,41 @@ def test_conv_batch():
     else:
         print('function call failed:', response.text)
 
+def test_conv_batch():
+    '''Test Conversation uploading in Batch'''
+    # function_url = "http://localhost:5001/gemini-team/us-central1/add_conversation_batch"
+    function_url = 'https://us-central1-gemini-team.cloudfunctions.net/add_conversation_batch'
+    data = {
+        # "user_id":"c1dbf4a1-b2af-4423-9c07-2d9a98806ff5",
+        "user_id":"c66efcb7-1e0a-4d30-a867-cda28e06a845",
+        "comments":comments,
+        "responses":responses
+    }
+    
+    make_a_request(function_url=function_url, data=data)
+
+def test_get_entire_conv():
+    '''Test get entire conversation from a session id '''
+    
+    function_url = "http://localhost:5001/gemini-team/us-central1/get_entire_conversation_by_session"
+    data = {"user_id": "c1dbf4a1-b2af-4423-9c07-2d9a98806ff5",
+            "session_id":"9257196a-ae26-482c-8513-e27dbe9bb081"}
+    
+    make_a_request(function_url=function_url, data=data)
 if __name__=="__main__":
-    name = "Emily Johnson"
-    username = "eJohnson"
-    comments = travel_questions
-    responses = travel_responses
-    create_conv_data(name, username, comments, responses)
+    name = "Lars Ekstrom"
+    # username = "eJohnson"
+    # comments = travel_questions
+    # responses = travel_responses
+    # create_conv_data(name, username, comments, responses)
+    
+    # get_conv_by_name(name=name)
+    
+    # conversation = get_conversation_from_session(name="Emily Johnson", 
+    #                                              session_id="9257196a-ae26-482c-8513-e27dbe9bb081")
+    
+    # print(conversation)
+    
+    test_get_entire_conv()
     
     # test_conv_batch()
