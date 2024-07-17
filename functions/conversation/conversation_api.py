@@ -129,7 +129,7 @@ def add_conversation_batch(req: https_fn.Request) -> https_fn.Response:
         raise exceptions.InternalServerError("AHH Something Bad Happened!")
 
 @https_fn.on_request()
-def get_entire_conversation_by_session(req: https_fn.Request) -> https_fn.Response:
+def getEntireConversationBySession(req: https_fn.Request) -> https_fn.Response:
     '''Gets Entire Conversation from a user session with bot and returns it in markdown format'''
     
     try:

@@ -127,7 +127,7 @@ def test_conv_batch():
 def test_get_entire_conv():
     '''Test get entire conversation from a session id '''
     
-    function_url = "http://localhost:5001/gemini-team/us-central1/get_entire_conversation_by_session"
+    function_url = "http://localhost:5001/gemini-team/us-central1/getEntireConversationBySession"
     data = {"user_id": "c1dbf4a1-b2af-4423-9c07-2d9a98806ff5",
             "session_id":"9257196a-ae26-482c-8513-e27dbe9bb081"}
     
