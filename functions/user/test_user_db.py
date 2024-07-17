@@ -21,8 +21,8 @@ def create_user_data():
     user_id=get_uid()
     data={
         "user_id":user_id,
-        "name":"Emily Johnson",
-        "username":"eJohnson"
+        "name":"Lars Ekstrom",
+        "username":"lEkstrom"
     }
     set_user(data=data)
     ...
