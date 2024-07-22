@@ -15,7 +15,7 @@ dotenv.load_dotenv()
 CURRENT_DIR=os.path.dirname(os.path.abspath(__file__))
 
 dotenv.load_dotenv(dotenv_path="keys/keys.env")
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = CURRENT_DIR + os.environ["GEM_KEYS_FUNCTION"]
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = CURRENT_DIR + os.environ["MASTER"]
 
 class Appsettings:
     config = configparser.ConfigParser()
@@ -90,5 +90,6 @@ def make_a_request(function_url: str, data: dict):
     
     if response.status_code == 200:
         print('function call succeeded:', response.json())
+        return response.json()
     else:
         print('function call failed:', response.text)

@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)) + "/../")
 
 from user_db import set_user
 from database import get_uid
-
+from constants import make_a_request, BASE_FUNCTION_URL
 
 def test_create_user():
     # from constants import DB
@@ -24,7 +24,7 @@ def create_user_data(data: dict):
     ...
 
 def test_get_user_sessions():
-    from constants import make_a_request, BASE_FUNCTION_URL
+    # from constants import make_a_request, BASE_FUNCTION_URL
     
     function_url = BASE_FUNCTION_URL + "getUserSessions"
     print(function_url)
@@ -32,6 +32,13 @@ def test_get_user_sessions():
     
     make_a_request(function_url=function_url, data=data)
     ...
+
+def test_user_exists():
+    function_url = BASE_FUNCTION_URL + "userExist"
+    data = {"user_id":"c66efcb7-1e0a-4d30-a867-cda28e06a845"}
+    
+    result = make_a_request(function_url=function_url, data=data)
+    print(result['data'])
 
 if __name__=="__main__":
     
@@ -42,4 +49,5 @@ if __name__=="__main__":
     # }
 
     # create_user_data(data=data)
-    test_get_user_sessions()
+    # test_get_user_sessions()
+    test_user_exists()

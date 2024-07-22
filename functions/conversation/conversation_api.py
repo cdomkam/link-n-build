@@ -5,7 +5,7 @@ from jsonschema import validate
 from typing import Any
 import json
 from conversation.conversation_db import set_conv, create_conv, get_conversation_from_session
-from user.user_db import get_user
+from user.user_db import get_user, update_user
 from constants import DB
 from database import get_uid
 
@@ -45,7 +45,7 @@ entire_conv_schema = {
         cors_methods=["get"],
     )
 )
-def add_conversation(req: https_fn.Request) -> https_fn.Response:
+def addConversation(req: https_fn.Request) -> https_fn.Response:
     '''Adds a comment from an AI Model and a response from a Human user'''
     try:
         # print(req.data)
@@ -89,7 +89,7 @@ def add_conversation(req: https_fn.Request) -> https_fn.Response:
         cors_methods=["get"],
     )
 )
-def add_conversation_batch(req: https_fn.Request) -> https_fn.Response:
+def addConversationBatch(req: https_fn.Request) -> https_fn.Response:
     '''Adds comments and responses taken from a conversation and stores the result in firestore'''
     try:
         data = json.loads(req.data)
@@ -100,7 +100,10 @@ def add_conversation_batch(req: https_fn.Request) -> https_fn.Response:
         comments = data.get('comments')
         responses = data.get('responses')
 
-        user_data = get_user(user_id=user_id) 
+        user_data = get_user(user_id=user_id)
+        if user_data is None:
+            raise Exception("User not Found!")
+         
         username = user_data.get('username')
         name = user_data.get('name')
         
@@ -119,14 +122,17 @@ def add_conversation_batch(req: https_fn.Request) -> https_fn.Response:
             
             conv_data, _ = create_conv(data=conv_data)
             set_conv(conv_data=conv_data)
+            
+        user_data['session_ids'].append(session_id)
+        update_user(user_id=user_id, user_data={"session_ids": user_data.get('session_ids')})
         return {"data": "SUCCESS"}
         
     except jsonschema.exceptions.ValidationError as e:
         message = 'This is a bad request'
         raise https_fn.HttpsError(code=https_fn.FunctionsErrorCode.INVALID_ARGUMENT, message=message, details={"internalMessage": "Its a bad request"})
     
-    except:
-        raise exceptions.InternalServerError("AHH Something Bad Happened!")
+    except exceptions.InternalServerError as e:
+        raise e("AHH Something Bad Happened!")
 
 @https_fn.on_request()
 def getEntireConversationBySession(req: https_fn.Request) -> https_fn.Response:

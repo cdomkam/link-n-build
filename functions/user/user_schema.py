@@ -31,5 +31,13 @@ get_user_sessions_schema = {
     "required": ["user_id"]
 }
 
+user_exist_schema = {
+    "type": "object",
+    "properties": {
+        "user_id": {"type": "string"},
+    },
+    "required": ["user_id"]
+}
+
 
 __all__ = ["create_user_schema", "update_user_schema", "get_user_sessions_schema"]
