@@ -16,6 +16,7 @@ class UserDoc:
     self.name: str = ""#string; // name
     self.username: str= "" #string; // username
     self.session_ids:list=[]
+    self.resume_ids:list=[]
   
   @property
   def obj(self):
