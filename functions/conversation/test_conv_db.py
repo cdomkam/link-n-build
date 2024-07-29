@@ -3,7 +3,7 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)) + "/../")
 
 from conversation_db import set_conv, create_conv, update_conv, get_conversations_by, get_conversation_from_session
-from user.user_db import get_users_by
+from user.user_db import get_users_by, update_user
 from database import get_uid
 import requests
 import dotenv
@@ -16,6 +16,8 @@ from emily_persona import (photography_questions, photography_responses, work_li
 
 from lars_persona import (linguistics_questions, linguistics_responses, education_questions, education_responses, 
                           sailing_questions, sailing_responses)
+
+from alex_interview import INTERVIEWER, ALEX_RESPONSE
 
 CURRENT_DIR=os.path.dirname(os.path.abspath(__file__)) + "/.."
 
@@ -94,6 +96,10 @@ def create_conv_data(name: str, username: str, comments:list[str], responses:lis
         conv_data, _ = create_conv(data=data)
         
         set_conv(conv_data=conv_data)
+    
+    sessions_ids = user_doc['session_ids']
+    sessions_ids.append(sessions_id)
+    update_user(user_id=user_id, user_data={"session_ids":sessions_ids})
     #     break
     ... 
 
@@ -126,17 +132,19 @@ def test_conv_batch():
 
 def test_get_entire_conv():
     '''Test get entire conversation from a session id '''
-    
-    function_url = "http://localhost:5001/gemini-team/us-central1/getEntireConversationBySession"
-    data = {"user_id": "c1dbf4a1-b2af-4423-9c07-2d9a98806ff5",
-            "session_id":"9257196a-ae26-482c-8513-e27dbe9bb081"}
+    from constants import BASE_FUNCTION_URL
+    # function_url = "http://localhost:5001/gemini-team/us-central1/getEntireConversationBySession"
+    function_url = BASE_FUNCTION_URL + "getEntireConversationBySession"
+    data = {"user_id": "088bd06b-ed73-4ef3-9686-6065d884a6f8",
+            "session_id":"d877b84e-a35e-43ac-a0bd-a5efe5a95e73"
+}
     
     make_a_request(function_url=function_url, data=data)
 if __name__=="__main__":
-    name = "Lars Ekstrom"
-    # username = "eJohnson"
-    # comments = travel_questions
-    # responses = travel_responses
+    # name = "Alex Durazo"
+    # username = "aDurazo"
+    # comments = INTERVIEWER
+    # responses = ALEX_RESPONSE
     # create_conv_data(name, username, comments, responses)
     
     # get_conv_by_name(name=name)

@@ -42,12 +42,13 @@ def test_user_exists():
 
 if __name__=="__main__":
     
-    # data={
-    #     "user_id":get_uid(),
-    #     "name":"test name",
-    #     "username":"tName"
-    # }
+    data={
+        
+        "user_id":get_uid(),
+        "name":"Alex Durazo",
+        "username":"aDurazo"
+    }
 
-    # create_user_data(data=data)
+    create_user_data(data=data)
     # test_get_user_sessions()
-    test_user_exists()
+    # test_user_exists()
