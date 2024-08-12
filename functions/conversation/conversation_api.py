@@ -4,8 +4,9 @@ import jsonschema
 from jsonschema import validate
 from typing import Any
 import json
-from conversation.conversation_db import set_conv, create_conv, get_conversation_from_session
+from conversation.conversation_db import set_conv, create_conv, get_conversation_from_session, convert_conversation_to_md
 from user.user_db import get_user, update_user
+from session.session_db import create_session, set_session
 from constants import DB
 from database import get_uid
 
@@ -110,6 +111,7 @@ def addConversationBatch(req: https_fn.Request) -> https_fn.Response:
         data['username'] = username
         data['name'] = name
         session_id = get_uid()
+        chunk=''
         for c, r in zip(comments, responses):
             conv_data = {
                 "user_id": user_id,
@@ -122,7 +124,20 @@ def addConversationBatch(req: https_fn.Request) -> https_fn.Response:
             
             conv_data, _ = create_conv(data=conv_data)
             set_conv(conv_data=conv_data)
-            
+            chunk = convert_conversation_to_md(name=name, comment=c, response=r, chunk=chunk)
+            # print("\n")
+            # print(chunk)
+            # print("\n")
+        # print(chunk)
+        session_data={
+            "session_id":session_id,
+            "text":chunk,
+            "user_id":user_id
+        }
+        
+        session_data, _ = create_session(data=session_data, session_id=session_id)
+        set_session(session_id=session_id, session_data=session_data)    
+        
         user_data['session_ids'].append(session_id)
         update_user(user_id=user_id, user_data={"session_ids": user_data.get('session_ids')})
         return {"data": "SUCCESS"}

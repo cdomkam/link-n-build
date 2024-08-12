@@ -95,13 +95,16 @@ def userExist(req: https_fn.CallableRequest) -> Any:
         raise exceptions.InternalServerError("AHH Something Bad Happened!") 
     
     
-@https_fn.on_request()
+@https_fn.on_call()
 def getUserSessions(req: https_fn.CallableRequest) -> Any:
     try:
-        data = json.loads(req.data)
+        # data = json.loads(req.data)
+        if not req.auth:
+            message = 'You\'re unauthorized'
+            raise exceptions.Unauthorized(message)
         
-        validate(instance=data, schema=get_user_sessions_schema)
-        user_id = data.get('user_id')
+        validate(instance=req.data, schema=get_user_sessions_schema)
+        user_id = req.data.get('user_id')
         user_dict = get_user(user_id=user_id)
         session_ids = user_dict['session_ids']
         

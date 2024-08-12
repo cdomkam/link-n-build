@@ -95,7 +95,7 @@ def get_conversations_by(filter_by: str, filter_value: str, comparator: str)-> A
   return conv_query.get()
 
 def get_conversation_from_session(name: str, session_id:str) -> str:
-  
+  '''Puts a conversation together between a bot and a user from a sessionID'''
   conv_docs = get_conversations_by(filter_by="session_id", filter_value=session_id, comparator="==")
   
   
@@ -106,5 +106,22 @@ def get_conversation_from_session(name: str, session_id:str) -> str:
     response = conv_dict['response']
     
     chunk += f"<b>Question</b>: {comment}<br><b>Answer</b>: {response}<br><br>"
+  
+  return chunk
+
+def convert_conversation_to_md(name: str, comment: str, response: str, chunk: str=None):
+  '''Converts a conversation between a bot and a user to markdown piecewise.
+    Use inside loop with comments and response
+    EXAMPLE:
+    >>> name = 'test_name'
+    >>> chunk = ''
+    >>> for comment, response in zip(comments, responses):
+    >>>   chunk += convert_conversation_to_md(name, comments, response, chunk)
+  '''
+  if len(chunk) == 0:
+    print('yo')
+    chunk=f"<h1>Conversation with {name}</h1>"
+    
+  chunk += f"<b>Question</b>: {comment}<br><b>Answer</b>: {response}<br><br>"
   
   return chunk

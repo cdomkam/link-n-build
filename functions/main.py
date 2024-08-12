@@ -10,6 +10,8 @@ from typing import Dict
 
 from user.user_api import *
 from conversation.conversation_api import *
+from resume.resume_api import *
+from session.session_api import *
 
 
 hello_LNB_schema = {

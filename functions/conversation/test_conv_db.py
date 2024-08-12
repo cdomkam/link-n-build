@@ -119,11 +119,11 @@ def make_a_request(function_url: str, data: dict):
 
 def test_conv_batch():
     '''Test Conversation uploading in Batch'''
-    # function_url = "http://localhost:5001/gemini-team/us-central1/add_conversation_batch"
-    function_url = 'https://us-central1-gemini-team.cloudfunctions.net/add_conversation_batch'
+    function_url = "http://localhost:5001/gemini-team/us-central1/addConversationBatch"
+    # function_url = 'https://us-central1-gemini-team.cloudfunctions.net/add_conversation_batch'
     data = {
-        # "user_id":"c1dbf4a1-b2af-4423-9c07-2d9a98806ff5",
-        "user_id":"c66efcb7-1e0a-4d30-a867-cda28e06a845",
+        "user_id":"c1dbf4a1-b2af-4423-9c07-2d9a98806ff5",
+        # "user_id":"c66efcb7-1e0a-4d30-a867-cda28e06a845",
         "comments":comments,
         "responses":responses
     }
@@ -137,14 +137,15 @@ def test_get_entire_conv():
     function_url = BASE_FUNCTION_URL + "getEntireConversationBySession"
     data = {"user_id": "088bd06b-ed73-4ef3-9686-6065d884a6f8",
             "session_id":"d877b84e-a35e-43ac-a0bd-a5efe5a95e73"
-}
+            }
     
     make_a_request(function_url=function_url, data=data)
+
 if __name__=="__main__":
     # name = "Alex Durazo"
     # username = "aDurazo"
-    # comments = INTERVIEWER
-    # responses = ALEX_RESPONSE
+    comments = INTERVIEWER
+    responses = ALEX_RESPONSE
     # create_conv_data(name, username, comments, responses)
     
     # get_conv_by_name(name=name)
@@ -154,6 +155,6 @@ if __name__=="__main__":
     
     # print(conversation)
     
-    test_get_entire_conv()
+    # test_get_entire_conv()
     
-    # test_conv_batch()
+    test_conv_batch()

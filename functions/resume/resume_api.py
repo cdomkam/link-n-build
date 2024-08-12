@@ -8,7 +8,7 @@ import json
 from resume.resume_db import set_resume, get_resume, create_resume
 from constants import DB
 from user.user_schema import create_user_schema, update_user_schema, get_user_sessions_schema, user_exist_schema
-from user.user_db import get_user
+from user.user_db import get_user, update_user
 
 create_resume_schema = {
     "type": "object",
@@ -35,7 +35,14 @@ def createResume(req: https_fn.CallableRequest) -> Any:
         
         validate(instance=req.data, schema=create_resume_schema)
 
-        create_resume(req.data)
+        resume_data, resume_id = create_resume(data=req.data)
+        set_resume(resume_id=resume_id, resume_data=resume_data)
+        
+        user_data = get_user(user_id=req.auth.uid)
+        resume_ids:list = user_data["resume_ids"]
+        resume_ids.append(resume_id)
+        update_user(user_id=req.auth.uid, user_data={"resume_ids": resume_ids})
+        
         return 
     
     except exceptions.Unauthorized:

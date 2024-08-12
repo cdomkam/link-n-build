@@ -12,8 +12,8 @@ from constants import DB
 class ResumeDoc:
   def __init__(self) -> None:
     self.created_at = firestore.SERVER_TIMESTAMP #; // when the account is created
-    self.resume_id: str
-    self.text: str
+    self.resume_id: str =""
+    self.text: str = ""
   
   @property
   def obj(self):
@@ -21,7 +21,7 @@ class ResumeDoc:
 
 
 def create_resume(data: dict, resume_id: str | None=None) -> Tuple[dict, str]:
-    ''' Creates a Conversation Object'''
+    ''' Creates a Resume Object'''
     
     if resume_id is None: resume_id = get_uid()
     data.update({"resume_id":resume_id})
@@ -31,7 +31,7 @@ def create_resume(data: dict, resume_id: str | None=None) -> Tuple[dict, str]:
 
 def set_resume(resume_id: str, resume_data: dict) -> None:
     '''
-    Set a User in a firestore db
+    Set a Resume in a firestore db
     Args:
 
     Return:
@@ -45,7 +45,7 @@ def set_resume(resume_id: str, resume_data: dict) -> None:
 
 def get_resume(resume_id: str) -> Any:
     '''
-    Get a User from firestore db
+    Get a resume from firestore db
     Args:
 
     Return:
@@ -57,7 +57,7 @@ def get_resume(resume_id: str) -> Any:
 
 def update_resume(resume_id: str, resume_data: Dict):
     '''
-    Update user in a firestore db
+    Update resume in a firestore db
     Args:
 
     Return:
@@ -69,7 +69,7 @@ def update_resume(resume_id: str, resume_data: Dict):
         
 def delete_resume():
   '''
-  Delete user in a firestore db
+  Delete resume in a firestore db
   Args:
 
   Return:
@@ -80,7 +80,7 @@ def delete_resume():
 
 
 def get_resume_by(filter_by: str, filter_value: str, comparator: str)-> Any:
-  '''Get user by a filter in the user doc
+  '''Get resume by a filter in the user doc
   Args:
     filter_by: The field to filter by in the doc
     filter_value: The value to filter by in the user doc
